@@ -49,9 +49,9 @@ def gen_wav(fpath_wav_out):
 	# these parameters will need updating!
 	# you may also wish to add more parameters
 
-	num_samples = 16000
-	w1 = 2 * math.pi * 1000 / sample_rate_hz
-	A = 2000
+	num_samples = 32000
+	w1 = 2 * math.pi * 2000 / sample_rate_hz
+	A = 24576
 	
 	# students - well done!
 	###############################################################
@@ -69,7 +69,7 @@ def gen_wav(fpath_wav_out):
 		# students - there is work to be done here
 		
 		# compute the current output value
-		yout = A * math.cos(w1 * n)
+		yout = A * math.cos(w1 * n + 0.785398163397448)
 		
 		# students - well done!
 		###############################################################

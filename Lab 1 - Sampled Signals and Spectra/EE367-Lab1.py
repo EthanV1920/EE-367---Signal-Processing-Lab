@@ -20,6 +20,8 @@ from cpe367exp1.cpe367_wav import cpe367_wav
 def wavgen(dur, freq, rate, channels, amp, phase, fpath_wave_out):
     # Create a new wav file
     wav_out  = cpe367_wav('wavOut', fpath_wave_out)
+    
+    # 
     wav_out.set_wav_out_configuration(
         channels, 
         16,
@@ -41,7 +43,8 @@ def wavgen(dur, freq, rate, channels, amp, phase, fpath_wave_out):
         
         working_file = wav_out.write_wav(working_sample)
         if working_file == False: break
-        
+    
+    # Close the wav file
     wav_out.close_wav()
     return True
 

@@ -53,5 +53,3 @@ class my_fifo:
 		val = self.buff[0]
 		
 		return val
-
-

@@ -47,14 +47,16 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 	###############################################################
 	###############################################################
 	# students - allocate your fifo, with an appropriate length (M)
-	'''
+	''''
 	M = 3
 	fifo = my_fifo(M)
+	previous = list
  
 	# students - allocate filter coefficients, length (M)
 	# students - these are not the correct filter coefficients
-	bk_list = [1, 2, 3]
+	bk_list = [1/3, 1/3, 1/3]
 	'''
+
 	xprev = 0
 	xprev2 = 0
 	
@@ -75,7 +77,7 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		###############################################################
 		# students - go to work!
 		
-		'''
+		'''''
 		# update history with most recent input
 		fifo.update(xin)
 		
@@ -89,12 +91,14 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		'''
 		
 		# evaluate difference equ, here as y[n] = x[n]
-		yout = xin
+		yout = 1/3*(xin+xprev+xprev2)
 		
 		# update history of recent inputs...
 		# xprev = ...
-		
-		
+		xprev2 = xprev
+		xprev = xin
+
+
 		# students - well done!
 		###############################################################
 		###############################################################
@@ -137,7 +141,7 @@ def main():
 	
 	
 	
-	'''
+
 	############################################
 	############################################
 	# test signal history
@@ -160,7 +164,7 @@ def main():
 
 	############################################
 	############################################
-	'''
+
 
 
 	# let's do it!

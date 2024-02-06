@@ -13,24 +13,38 @@ import math
 from cpe367_wav import cpe367_wav
 
 
+def getMidiFreq(note):
+    """This function returns the frequency of a midi note
+
+    Args:
+        note (int): midi defined note
+
+    Returns:
+        int: integer value of the frequency of the note
+    """
+    # Using the formula that was provided in the lab manual to convert midi note
+    # to frequency
+    return int(440 * 2 ** ((note - 49) / 12))
 
 ############################################
 ############################################
 # define function to add one note to list
 # students - modify this function as needed!
 
-def add_note(xlist,amp,w0,nstart,nlen):
-
-	# this initial version of the function only includes a tone burst
-	#  no harmonics and no decaying envelope are included
+def add_note(xlist,amp,w0,nstart,nlen,harmonics):
+	# initializing the decay to zero per sample added to the music
+	decay = 0
+	# iterate over the samples and harmonics adding each sample to the list
 	for n in range(nstart,nstart+nlen):
-		xlist[n] += amp * math.sin(w0 * n)
-
-	# note summed into signal
+		# iterate the decay as the samples progress
+		decay += 1
+		for harmonic in range(harmonics):
+			if harmonic == 1:
+				xlist[n] +=  (amp / (harmonic + 1)) * math.sin((harmonic + 1) * w0 * n)
+			else:
+				xlist[n] += (math.exp(-decay/5912)) * (amp / (harmonic + 1)) * math.sin((harmonic + 1) * w0 * n)
 	return
 	
-			
-
 
 ############################################
 ############################################
@@ -64,22 +78,40 @@ def gen_wav(fpath_wav_out):
 	###############################################################
 	# students - modify this section here
 
-	# these parameters will need updating!
-	#  you may also wish to add more parameters
-	total_num_samples = 32000
+	# define the total number of samples in relation to the sample rate and
+	# beat count for the song
+	total_num_samples = int(9 * 0.285 * 16000)
+	print("Total Number of Samples:", total_num_samples)
 	
 	# allocate list of zeros to store an empty signal
 	xlist = [0] * total_num_samples
 
-	# setup one note
-	#  this implementation does not include harmonics or a decay
-	w1 = 2 * math.pi * 440 / sample_rate_hz
-	amp = 10000
+	# define the notes that need to be played
+	noteArray = [
+		23, 0, 3,
+		35, 3, 6,
+		32, 6, 9,
+		47, 1, 2,
+		49, 2, 3,
+		51, 3, 4,
+		54, 4, 5,
+		52, 5, 6,
+		52, 6, 7,
+		56, 7, 8,
+		54, 8, 9
+	]
 	
-	n_start = 8000
-	n_durr = 4000
+	# iterate over the notes and place them in to the song
+	for i in range(int(len(noteArray)/3)):
+		# define w1 with the midi note and the sample rate
+		w1 = 2 * math.pi * getMidiFreq(noteArray[3 * i])/ 16000
+		amp = 10000
+		n_start = int(noteArray[3 * i + 1] * 0.285 * 16000)
+		n_durr = int(noteArray[3 * i + 2] * 0.285 * 16000) - n_start
+		
+		# add note to the over all array
+		add_note(xlist,amp,w1,n_start,n_durr, 6)
 	
-	add_note(xlist,amp,w1,n_start,n_durr)
 	
 	
 	# students - well done!

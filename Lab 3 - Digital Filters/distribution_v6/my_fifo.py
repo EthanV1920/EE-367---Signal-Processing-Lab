@@ -30,10 +30,11 @@ class my_fifo:
 		"""
 
 		# students - need to make space for newest sample and include it in history
-		
+
 		# students - this is not the correct implementation!
-		self.buff[0] = current_in
-		
+		self.buff.insert(0,current_in)
+		self.buff.pop()
+
 		return True
 
 	
@@ -48,9 +49,9 @@ class my_fifo:
 			age_indx == M-1  ->  oldest historical value
 		:return: value stored in the list of historical values, as requested by indx 
 		"""
-		
+		# TODO:	
 		# students - this is not the correct implementation!
-		val = self.buff[0]
+		val = self.buff[age_indx]
 		
 		return val
 

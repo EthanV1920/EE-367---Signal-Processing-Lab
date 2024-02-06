@@ -89,10 +89,11 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		'''
 		
 		# evaluate difference equ, here as y[n] = x[n]
-		yout = xin
+		yout = 1 / 3 * (xin + xprev + xprev2)
 		
 		# update history of recent inputs...
-		# xprev = ...
+		xprev2 = xprev
+		xprev = xin
 		
 		
 		# students - well done!

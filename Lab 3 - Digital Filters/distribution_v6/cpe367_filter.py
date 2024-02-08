@@ -54,8 +54,17 @@ def process_wav(fpath_wav_in,fpath_wav_out):
  
 	# students - allocate filter coefficients, length (M)
 	# students - these are not the correct filter coefficients
+<<<<<<< Updated upstream
 	bk_list = [1/3, -1/3, 1/3]
 
+=======
+	bk_list = []
+	
+	#This is an averaging filter that adds a 1/M (M being the size of the
+ 	# buffer we are filtering) to the bk_list
+	for i in range(M):
+		bk_list.append(1/M)
+>>>>>>> Stashed changes
 
 	xprev = 0
 	xprev2 = 0
@@ -89,10 +98,18 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 			# y[n] = sum of b[k] * x[n-k]
 			yout += bk_list[k] * fifo.get(k)
 			
+<<<<<<< Updated upstream
 
 		
 		# evaluate difference equ, here as y[n] = x[n]
 		yout = (1/3*xin) +(-1/3*xprev) + (1/3*xprev2)
+=======
+			yout += bk_list[k]* fifo.get(k)
+			
+		
+		#this is the code we used when we brute forced it
+		#yout = (1/3)*xin+(-1/3)*xprev + (1/3)*xprev2
+>>>>>>> Stashed changes
 		# update history of recent inputs...
 		# xprev = ...
 		temp = xprev

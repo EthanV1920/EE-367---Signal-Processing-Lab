@@ -50,12 +50,22 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 	###############################################################
 	###############################################################
 	# students - allocate your fifo, with an appropriate length (M)
-	M = 3				# length 3 is not appropriate!
-	fifo = my_fifo(M)
+	M = 10
+	right_fifo = my_fifo(M)
+	left_fifo = my_fifo(M)
+	
+	# Delay on ears
+	# L: 9 8 7 6 5 4 3 2 1 0
+    # R: 0 1 2 3 4 5 6 7 8 9
  
-	# students - allocate filter coefficients as needed, length (M)
-	# students - these are not the correct filter coefficients
-	bk_list = [1, 0, 0]
+	bk_list = []
+	for i in range(M):
+		bk_list.append(1/M)
+	# bk_list = [1, 0, 0]
+	
+	# sample counter for stereo effect
+	sample_count = 0
+	delay = 0
 	
 	###############################################################
 	###############################################################
@@ -75,13 +85,20 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		# students - there is work to be done here!
 		
 		# update history with most recent input
-		fifo.update(xin)
-		
+		right_fifo.update(xin)
+		left_fifo.update(xin)
+		sample_count += 1
 		# evaluate your difference equation	to yield the desired effect!
 		#  this example just copies the mono input into the left and right channel
-		yout_left = xin
-		yout_right = xin
-		
+		if (sample_count % 6400 == 0):
+			delay += 1
+			if delay > 9:
+				delay = 0
+			print(delay)
+   
+		yout_right = right_fifo.get(9 - delay)
+		yout_left = left_fifo.get(delay)
+      
 		# students - well done!
 		###############################################################
 		###############################################################
@@ -120,8 +137,8 @@ def main():
 		return False
 			
 	# grab file names
-	fpath_wav_in = 'joy.wav'
-	fpath_wav_out = 'joy_no_change.wav'
+	fpath_wav_in = 'Lab 4 - Positional Audio/source/wav/joy.wav'
+	fpath_wav_out = 'Lab 4 - Positional Audio/source/wav/outputs/joy_no_change.wav'
 	
 	
 	

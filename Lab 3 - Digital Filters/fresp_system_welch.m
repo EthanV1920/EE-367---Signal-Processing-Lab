@@ -10,7 +10,7 @@ function fresp_system_welch(in_fname,out_fname)
 [y,fs] = audioread (out_fname);
 [x,fs] = audioread (in_fname);
 
-N = length(x) / 200;
+N = length(x) / 20;
 N = floor(N);
 
 % duration of signal used for each DFT transform

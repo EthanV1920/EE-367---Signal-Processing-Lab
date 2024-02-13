@@ -47,16 +47,11 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 	###############################################################
 	###############################################################
 	# students - allocate your fifo, with an appropriate length (M)
+	
+	# This is an averaging filter that adds a 1/M (M being the size of the
+ 	# buffer we are filtering) to the bk_list
 
-	M = 11
-	fifo = my_fifo(M)
-	previous = list
- 
-	# students - allocate filter coefficients, length (M)
-	# students - these are not the correct filter coefficients
-	bk_list = []
-	for i in range(M):
-		bk_list.append(1/M)
+	bk_list = [1/3, -1/3, 1/3]
 	xprev = 0
 	xprev2 = 0
 	
@@ -77,10 +72,6 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		###############################################################
 		# students - go to work!
 		
-
-		# update history with most recent input
-		fifo.update(xin)
-		
 		# evaluate your difference equation		
 		yout = 0
 		for k in range(M):
@@ -89,21 +80,6 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 			# y[n] = sum of b[k] * x[n-k]
 			yout += bk_list[k] * fifo.get(k)
 		
-		# evaluate difference equ, here as y[n] = x[n]
-		# yout = xin
-		
-		# update history of recent inputs...
-		# xprev = ...
-		#temp = xprev
-		#xprev = xin
-		#xprev2 = temp
-
-		
-		
-		
-
-
-
 		# students - well done!
 		###############################################################
 		###############################################################

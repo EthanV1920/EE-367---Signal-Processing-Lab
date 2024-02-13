@@ -87,11 +87,11 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 			
 			# use your fifo to access recent inputs when evaluating your diff eq
 			# y[n] = sum of b[k] * x[n-k]
-			
-			yout += bk_list[k]* fifo.get(k)
-			
+			yout += bk_list[k] * fifo.get(k)
 		
-
+		# evaluate difference equ, here as y[n] = x[n]
+		yout = xin
+		
 		# update history of recent inputs...
 		# xprev = ...
 		#temp = xprev

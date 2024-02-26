@@ -50,3 +50,11 @@ class my_fifo:
 
         # return the value at the desired index
         return self.buff[age_indx]
+
+    ############################################
+    # get size of array
+    def get_size(self):
+        """
+        :return: the size of the buffer
+        """
+        return int(self.buff_len)

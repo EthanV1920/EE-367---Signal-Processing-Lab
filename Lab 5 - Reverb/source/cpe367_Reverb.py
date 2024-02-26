@@ -14,9 +14,6 @@ from my_fifo import my_fifo
 
 
 	
-############################################
-############################################
-# define routine for implementing a digital filter
 def process_wav(fpath_wav_in,fpath_wav_out):
 	"""
 	: this example does not implement an echo!
@@ -47,26 +44,27 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		print('Cant open wav file for writing')
 		return False
 	
+
+	# students - well done!
 	###############################################################
 	###############################################################
 	# students - allocate your fifo, with an appropriate length (M)
-	M = 10
-	right_fifo = my_fifo(M)
-	left_fifo = my_fifo(M)
-	
-	# Delay on ears
-	# L: 9 8 7 6 5 4 3 2 1 0
-    # R: 0 1 2 3 4 5 6 7 8 9
- 
-	bk_list = []
-	for i in range(M):
-		bk_list.append(1/M)
-	# bk_list = [1, 0, 0]
-	
-	# sample counter for stereo effect
-	sample_count = 0
-	delay = 0
-	
+	runningSum = 0
+
+	# Creating a 0.125 second echo
+	M1 = int(0.030 * 16000)
+	M2 = int(0.035 * 16000)
+	M3 = int(0.040 * 16000)
+	M4 = int(0.045 * 16000)
+	fifo_array = [my_fifo(M1), my_fifo(M2), my_fifo(M3), my_fifo(M4)]
+
+	M5 = int(0.005 * 16000)
+	M6 = int(0.0017 * 16000)
+	fifo_array_2 = [my_fifo(M5), my_fifo(M6)]
+
+	stageGain = 0.7
+	finalGain = 0.5
+	# students - well done!
 	###############################################################
 	###############################################################
 
@@ -84,29 +82,31 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		###############################################################
 		# students - there is work to be done here!
 		
-		# update history with most recent input
-		right_fifo.update(xin)
-		left_fifo.update(xin)
-		sample_count += 1
-		# evaluate your difference equation	to yield the desired effect!
-		#  this example just copies the mono input into the left and right channel
-		if (sample_count % 6400 == 0):
-			delay += 1
-			if delay > 9:
-				delay = 0
-			print(delay)
-   
-		yout_right = right_fifo.get(9 - delay)
-		yout_left = left_fifo.get(delay)
-      
+		# Filter 1-4 delay and summation
+		for fifo in fifo_array:
+			runningSum = runningSum + fifo.get(fifo.get_size() - 1)
+			fifo.update(xin + stageGain * fifo.get(fifo.get_size() - 1))
+
+		# Filter 5 and 6
+		# for fifo in fifo_array_2:
+		# 	runningSum
+		# 	# runningSum = -stageGain * runningSum + fifo.get(fifo.get_size - 1) + stageGain * fifo.get(fifo.get_size - 2) - stageGain ** 2 * fifo.get(fifo.get_size - 1)  - stageGain ** 3 * fifo.get(fifo.get_size - 2)
+		# 	fifo.update(
+
+		# Update history with most recent input
+		yout_right = finalGain * runningSum + xin
+		yout_left = finalGain * runningSum + xin
+		
+
+		
 		# students - well done!
 		###############################################################
 		###############################################################
 
 
 		# convert to signed int
-		yout_left = int(round(yout_left))
-		yout_right = int(round(yout_right))
+		yout_left = int(yout_left)
+		yout_right = int(yout_right)
 		
 		# output current sample
 		ostat = wav_out.write_wav_stereo(yout_left,yout_right)

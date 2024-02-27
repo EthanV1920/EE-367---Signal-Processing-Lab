@@ -58,3 +58,11 @@ class my_fifo:
         :return: the size of the buffer
         """
         return int(self.buff_len)
+
+    ############################################
+    # get last element
+    def get_last(self):
+        """
+        :return: the last element in the buffer
+        """
+        return self.buff[self.buff_len - 1]

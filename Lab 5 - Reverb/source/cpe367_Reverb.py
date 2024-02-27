@@ -49,18 +49,25 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 	###############################################################
 	###############################################################
 	# students - allocate your fifo, with an appropriate length (M)
-	runningSum = 0
 
 	# Creating a 0.125 second echo
-	M1 = int(0.030 * 16000)
-	M2 = int(0.035 * 16000)
-	M3 = int(0.040 * 16000)
-	M4 = int(0.045 * 16000)
-	fifo_array = [my_fifo(M1), my_fifo(M2), my_fifo(M3), my_fifo(M4)]
+	M1i = int(0.030 * 16000)
+	M1o = int(0.030 * 16000)
+	M2i = int(0.035 * 16000)
+	M2o = int(0.035 * 16000)
+	M3i = int(0.040 * 16000)
+	M3o = int(0.040 * 16000)
+	M4i = int(0.045 * 16000)
+	M4o = int(0.045 * 16000)
+	fifo_array_1i = [my_fifo(M1i), my_fifo(M2i), my_fifo(M3i), my_fifo(M4i)]
+	fifo_array_1o = [my_fifo(M1o), my_fifo(M2o), my_fifo(M3o), my_fifo(M4o)]
 
-	M5 = int(0.005 * 16000)
-	M6 = int(0.0017 * 16000)
-	fifo_array_2 = [my_fifo(M5), my_fifo(M6)]
+	M5i = int(0.005 * 16000)
+	M5o = int(0.005 * 16000)
+	M6i = int(0.0017 * 16000)
+	M6o = int(0.0017 * 16000)
+	fifo_array_2i = [my_fifo(M5i), my_fifo(M6i)]
+	fifo_array_2o = [my_fifo(M5o), my_fifo(M6o)]
 
 	stageGain = 0.7
 	finalGain = 0.5
@@ -82,16 +89,27 @@ def process_wav(fpath_wav_in,fpath_wav_out):
 		###############################################################
 		# students - there is work to be done here!
 		
+		runningSum = 0
+
 		# Filter 1-4 delay and summation
-		for fifo in fifo_array:
-			runningSum = runningSum + fifo.get(fifo.get_size() - 1)
-			fifo.update(xin + stageGain * fifo.get(fifo.get_size() - 1))
+		for filter in range (4):
+			fifo_array_1i[filter].update(xin)
+			fifo_array_1o[filter].update(stageGain * fifo_array_1i[filter].get_last())
+			runningSum = runningSum + fifo_array_1i[filter].get_last() + fifo_array_1o[filter].get_last()
 
 		# Filter 5 and 6
-		# for fifo in fifo_array_2:
-		# 	runningSum
-		# 	# runningSum = -stageGain * runningSum + fifo.get(fifo.get_size - 1) + stageGain * fifo.get(fifo.get_size - 2) - stageGain ** 2 * fifo.get(fifo.get_size - 1)  - stageGain ** 3 * fifo.get(fifo.get_size - 2)
-		# 	fifo.update(
+		fifo_array_2i[0].update(runningSum)
+		fifo_array_2o[0].update(stageGain * fifo_array_2i[0].get_last())
+		w = fifo_array_2i[0].get_last() + stageGain * fifo_array_2o[0].get_last()
+		runningSum = -stageGain * fifo_array_2i[0].get_last() + w - stageGain ** 2 * w
+		 
+		# fifo_array_2i[1].update(runningSum)
+		# fifo_array_2o[1].update(stageGain * fifo_array_2i[1].get_last())
+		# w = fifo_array_2i[1].get_last() + stageGain * fifo_array_2o[1].get_last()
+		# runningSum = -stageGain * fifo_array_2i[1].get_last() + w - stageGain ** 2 * w
+
+			# runningSum = -stageGain * runningSum + fifo.get(fifo.get_size - 1) + stageGain * fifo.get(fifo.get_size - 2) - stageGain ** 2 * fifo.get(fifo.get_size - 1)  - stageGain ** 3 * fifo.get(fifo.get_size - 2)
+			
 
 		# Update history with most recent input
 		yout_right = finalGain * runningSum + xin

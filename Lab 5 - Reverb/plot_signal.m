@@ -3,7 +3,7 @@
 clear
 
 % load WAV file
-wav_fname = 'reverb_hn.wav';
+wav_fname = 'joy_reverb.wav';
 [xn,fs] = audioread(wav_fname);
 
 % create a sequence of time-domain values

@@ -111,8 +111,8 @@ def main():
 		return False
 		
 	# assign file name
-	fpath_sig_in = 'dtmf_signals_slow.txt'
-	# fpath_sig_in = 'dtmf_signals_fast.txt'
+	fpath_sig_in = 'Final Lab/src/input/DTMF Signals Slow.txt'
+	# fpath_sig_in = 'Final Lab/src/input/DTMF Signals Fast.txt'
 	
 	
 	# let's do it!

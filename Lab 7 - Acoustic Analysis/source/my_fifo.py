@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-
-############################################
-# this EMPTY python fifo class was written by dr fred depiero at cal poly
-# distribution is unrestricted provided it is without charge and includes attribution
-
-import sys
-import json
-
-
-class my_fifo:
 
     ############################################
     # constructor for signal history object

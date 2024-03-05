@@ -1,0 +1,29 @@
+
+import numby as np
+
+class LogicUnit:
+
+    def __init__(self, arr):
+        # arr = [697, 770, 852, 941, 1209, 1336, 1477, 1633]
+        self.arr1 = np.array(arr[0:4])  # Corrected indexing
+        self.arr2 = np.array(arr[4:])   # Corrected indexing
+        self.a = 0
+        self.b = 0
+        self.find_two_highest()
+
+    def find_two_highest(self):
+        for i in range(len(self.arr1)):
+            if self.arr1[i] >= self.arr1[self.a]:
+                self.a = i
+        for i in range(len(self.arr2)):
+            if self.arr2[i] >= self.arr2[self.b]:
+                self.b = i  # Corrected variable assignment
+
+    def symbol(self):
+        two_d_array = [
+            [1, 2, 3, 'a'],
+            [4, 5, 6, 'b'],
+            [7, 8, 9, 'c'],
+            ['*', 0, '#', 'd']
+        ]
+        return two_d_array[self.b][self.a]

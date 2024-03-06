@@ -1,4 +1,4 @@
-
+class my_fifo:
     ############################################
     # constructor for signal history object
     def __init__(self, buff_len):

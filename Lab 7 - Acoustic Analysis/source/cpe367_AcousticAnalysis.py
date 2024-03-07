@@ -50,13 +50,16 @@ def process_wav(fpath_wav_in, fpath_wav_out):
 
     # DFT calculation
     for sample in range(len(sampleValues)//2):
-        dftCalc = 0
+        dftCalcArray = []
+        imag = 0
+        real = 0
         # TODO: Need to fix the DFT calculation
         for k in range(len(sampleValues) - 1) :
-            dftCalc = np.sin(-2 * math.pi * k * n / len(sampleValues))
-            dftCalc = dftCalc + (np.cos(-2 * math.pi * k * n / len(sampleValues)))
-            dftCalc = dftCalc * sampleValues[k]
-            dftList.append(dftCalc / (len(sampleValues))//2)
+            imag += sampleValues[k] * np.sin(-2 * math.pi * k * n / len(sampleValues))
+            real += sampleValues[k] * np.cos(-2 * math.pi * k * n / len(sampleValues))
+            # dftCalc = np.sqrt(dftCalc) * sampleValues[k]
+            # dftCalcArray.append(dftCalc / (len(sampleValues))//2)
+        dftList.append(np.sqrt(imag**2 + real**2) / (len(sampleValues))//2)
         print(f"Sample {sample}: {dftList[sample]} and {sampleValues[sample]}")
         n+=1
         
@@ -94,7 +97,7 @@ def main():
         print(sys.version)
         return False
 
-    fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav'
+    fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/cos_1khz_pulse_20msec.wav'
     fpath_wav_out = 'Lab 7 - Acoustic Analysis/source/wav/output/dft.wav'
 
     return process_wav(fpath_wav_in, fpath_wav_out)

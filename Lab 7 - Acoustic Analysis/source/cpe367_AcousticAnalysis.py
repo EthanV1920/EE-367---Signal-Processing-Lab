@@ -33,34 +33,37 @@ def process_wav(fpath_wav_in, fpath_wav_out):
 
     bk_list = [1]
 
-    xin = 0
-    i = 0
-    N = 4000
 
-    dftList_real = [0] * 4000
-    dftList_imag = [0] * 4000
-    sampleValues = [0] * 4000
+    xin = 0
+    n = 0
+    dftList = []
+    sampleValues = []
+    # sampleValues = [0] * 4001
 
     while xin != None:
         xin = wav_in.read_wav()
+        print(f"Sample {n}: {xin}")
         if xin == None:
             break
 
-        sampleValues[i] = xin
-        i += 1
+        sampleValues.append(xin) 
 
     # DFT calculation
-    for k in range(4000):
-        for n in range(4000):
-            real = sampleValues[n] * math.cos(-2 * math.pi * k * (n/4000))
-            imag = sampleValues[n] * math.sin(-2 * math.pi * k * (n/4000))
-            dftList_real[k] += real
-            dftList_imag[k] += imag
-
+    for sample in range(len(sampleValues)//2):
+        dftCalc = 0
+        # TODO: Need to fix the DFT calculation
+        for k in range(len(sampleValues) - 1) :
+            dftCalc = np.sin(-2 * math.pi * k * n / len(sampleValues))
+            dftCalc = dftCalc + (np.cos(-2 * math.pi * k * n / len(sampleValues)))
+            dftCalc = dftCalc * sampleValues[k]
+            dftList.append(dftCalc / (len(sampleValues))//2)
+        print(f"Sample {sample}: {dftList[sample]} and {sampleValues[sample]}")
+        n+=1
+        
     # Output DFT to the WAV file
-    for k in range(4000):
-        yout_left = int(round(dftList_real[k] / N))
-        yout_right = int(round(dftList_imag[k] / N))
+    for sample in dftList:
+        yout_left = int(round(sample))
+        yout_right = int(round(sample))
 
         # output current sample
         ostat = wav_out.write_wav_stereo(yout_left, yout_right)
@@ -68,9 +71,11 @@ def process_wav(fpath_wav_in, fpath_wav_out):
             break
 
     # Visualization using Matplotlib
-    xList = np.arange(4000)
+    print(len(dftList))
+    print(len(sampleValues)//2)
+    xList = np.arange(len(sampleValues)//2)
     plt.figure()
-    plt.plot(xList, np.abs(dftList_real + 1j * dftList_imag))
+    plt.plot(xList, dftList)
     plt.title('Magnitude of DFT')
     plt.xlabel('Frequency Bin')
     plt.ylabel('Magnitude')
@@ -89,8 +94,8 @@ def main():
         print(sys.version)
         return False
 
-    fpath_wav_in = 'cos_1khz_pulse_20msec.wav'
-    fpath_wav_out = 'dft.wav'
+    fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav'
+    fpath_wav_out = 'Lab 7 - Acoustic Analysis/source/wav/output/dft.wav'
 
     return process_wav(fpath_wav_in, fpath_wav_out)
 

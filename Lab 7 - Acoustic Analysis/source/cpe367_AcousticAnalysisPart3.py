@@ -10,30 +10,13 @@ from cpe367_wav import cpe367_wav
 from my_fifo import my_fifo
 from tqdm import tqdm
 
-def process_wav(fpath_wav_in, fpath_wav_out):
+def process_wav(fpath_wav_in):
     wav_in = cpe367_wav('wav_in', fpath_wav_in)
-    wav_out = cpe367_wav('wav_out', fpath_wav_out)
 
     ostat = wav_in.open_wav_in()
     if ostat == False:
         print('Can\'t open wav file for reading')
         return False
-
-    num_channels = 2
-    sample_width_8_16_bits = 16
-    sample_rate_hz = 16000
-    wav_out.set_wav_out_configuration(num_channels, sample_width_8_16_bits, sample_rate_hz)
-
-    ostat = wav_out.open_wav_out()
-    if ostat == False:
-        print('Can\'t open wav file for writing')
-        return False
-
-    M = 1000
-    fifox = my_fifo(M)
-
-    bk_list = [1]
-
 
     xin = 0
     n = 0
@@ -63,61 +46,56 @@ def process_wav(fpath_wav_in, fpath_wav_out):
         dftList.append(np.sqrt(imag**2 + real**2) / (len(sampleValues))//2)
         # print(f"Sample {sample}: {dftList[sample]} and {sampleValues[sample]}")
         n+=1
-        
-    # Output DFT to the WAV file
-    for sample in dftList:
-        yout_left = int(round(sample))
-        yout_right = int(round(sample))
-
-        # output current sample
-        ostat = wav_out.write_wav_stereo(yout_left, yout_right)
-        if ostat == False:
-            break
     
     # Calculate frequency bins for the DFT
     N = len(sampleValues)
-    sample_rate = 8000  # or 16000 based on your configuration
+    sample_rate = 8000
     frequencies = np.arange(N) * sample_rate / N
+    
+    # Create a numpy array of the DFT (helps with calculations)
     dfts = np.array(dftList)
+    
+    # Get the Raw Max frequency
     max_frequency = np.argmax(dfts)
+    maxMagnitude = dftList[max_frequency]
+    
+    # Debugging print statements
     print(f"The max frequency is: {frequencies[max_frequency]} Hz")
-    print(f"The max magnitude is: {dftList[max_frequency]}")
+    print(f"The max magnitude is: {maxMagnitude}")
+
+    # Print length of frequency array and dfT array
+    print(f"Length of frequency array: {len(frequencies[max_frequency//2:N//4])}")
+    print(f"Length of DFT array: {len(dftList[max_frequency//2:int(max_frequency * 3)])}")
+
+    minimumIndex = max_frequency // 2
+    maximumIndex = int(max_frequency * 3)
 
 
-    # Compute the magnitudes of the DFT (you only need half of them due to symmetry)
-    magnitudes = np.abs(dftList[max_frequency//2:N//4])
+    # Compute the magnitudes of the DFT (only need half of them due to symmetry)
+    magnitudes = np.abs(dftList[minimumIndex : maximumIndex])
 
     # Compute the weighted frequencies (only for the first half due to symmetry)
-    weighted_frequencies = frequencies[max_frequency//2:N//4] * magnitudes
+    weighted_frequencies = frequencies[minimumIndex : maximumIndex] * magnitudes
 
+    workingMagnitudes = []
+    workingFrequencies = []
+
+    for i in range(len(weighted_frequencies)):
+        if (magnitudes[i] >= maxMagnitude/2):
+            workingMagnitudes.append(magnitudes[i])
+            workingFrequencies.append(weighted_frequencies[i])
+            
     # Calculate the sum of weighted frequencies and the sum of magnitudes
-    sum_weighted_frequencies = np.sum(weighted_frequencies)
-    sum_magnitudes = np.sum(magnitudes)
+    sum_weighted_frequencies = np.sum(workingFrequencies)
+    sum_magnitudes = np.sum(workingMagnitudes)
 
-    # Calculate the weighted average, which is the peak frequency
+    # Calculate the weighted average
     peak_frequency = sum_weighted_frequencies / sum_magnitudes
 
     # Print the peak frequency
     print(f"The peak frequency is: {peak_frequency} Hz")
 
-#    # Compute the magnitudes of the DFT
-#     magnitudes = np.abs(dftList[:(len(sampleValues)//4)])
-
     xList = np.arange(len(sampleValues)//4)
-
-#     # Compute the weighted frequencies
-#     weighted_frequencies = xList * magnitudes
-
-#     # Calculate the sum of weighted frequencies and the sum of magnitudes
-#     sum_weighted_frequencies = np.sum(weighted_frequencies)
-#     sum_magnitudes = np.sum(magnitudes)
-
-#     # Calculate the weighted average, which is the peak frequency
-#     peak_frequency = sum_weighted_frequencies / sum_magnitudes
-
-#     # Print the peak frequency
-#     print(f"The peak frequency is: {peak_frequency} Hz")
-    
 
     # Calculate the air gap
     air_gap = 343 / (2 * peak_frequency)
@@ -137,9 +115,10 @@ def process_wav(fpath_wav_in, fpath_wav_out):
     plt.title(f'Magnitude of DFT {fpath_wav_in.split("/")[-1]}')
     # plt.show()
     plt.savefig(f'Lab 7 - Acoustic Analysis/source/wav/output/{fpath_wav_in.split("/")[-1].split(".")[0]}_DFT.png')
+    # plt.savefig(f'wav/output/{fpath_wav_in.split("/")[-1].split(".")[0]}_DFT.png')
 
     wav_in.close_wav()
-    wav_out.close_wav()
+    # wav_out.close_wav()
 
     return True
 
@@ -152,23 +131,36 @@ def main():
         return False
 
     files = [
-            #  'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav',
-            #  'Lab 7 - Acoustic Analysis/source/wav/tile1b.wav',
-            #  'Lab 7 - Acoustic Analysis/source/wav/tile1c.wav',
-            #  'Lab 7 - Acoustic Analysis/source/wav/tile1d.wav',
-            #  'Lab 7 - Acoustic Analysis/source/wav/tile1e.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/tile1b.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/tile1c.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/tile1d.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/tile1e.wav',
              'Lab 7 - Acoustic Analysis/source/wav/tile2a.wav',
              'Lab 7 - Acoustic Analysis/source/wav/tile2b.wav',
              'Lab 7 - Acoustic Analysis/source/wav/tile2c.wav',
              'Lab 7 - Acoustic Analysis/source/wav/tile2d.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2e.wav']
+             'Lab 7 - Acoustic Analysis/source/wav/tile2e.wav'
+             ]
+             
+    clifiles = [
+             'wav/tile1a.wav',
+             'wav/tile1b.wav',
+             'wav/tile1c.wav',
+             'wav/tile1d.wav',
+             'wav/tile1e.wav',
+             'wav/tile2a.wav',
+             'wav/tile2b.wav',
+             'wav/tile2c.wav',
+             'wav/tile2d.wav',
+             'wav/tile2e.wav']
              
     # fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav'
     # fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/cos_1khz_pulse_20msec.wav'
     # fpath_wav_in = 'Lab 7 - Acoustic Analysis/source/wav/output/Part2Sample.wav' 
-    fpath_wav_out = 'Lab 7 - Acoustic Analysis/source/wav/output/dft.wav'
+
     for f in files:
-        process_wav(f, fpath_wav_out)
+        process_wav(f)
     
     return True
 

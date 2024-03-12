@@ -16,7 +16,7 @@ import numpy as np
 from cpe367_wav import cpe367_wav
 from cpe367_sig_analyzer import cpe367_sig_analyzer
 
-
+import my_fifo as fifo
 
 
 
@@ -33,6 +33,9 @@ def process_wav(fpath_sig_in):
 	
 	# sample rate is 4kHz
 	fs = 4000
+
+	# Create fifo
+	buffer = fifo(64)
 	
 	# instantiate signal analyzer and load data
 	s2 = cpe367_sig_analyzer(more_sig_list,fs)
@@ -49,10 +52,16 @@ def process_wav(fpath_sig_in):
 		# read next input sample from the signal analyzer
 		xin = s2.get('xin',n_curr)
 		
+		analyzingArray = []
 		
+		for i in buffer.get_size():
+			analyzingArray.append(buffer.get(i))
 		
 		########################
 		# students: evaluate each filter and implement other processing blocks
+		for i in range(analyzingArray):
+			analyzingArray.append(xin[i*32:(i+1)*32])
+			print(analyzingArray)
 		
 		########################
 		# students: combine results from filtering stages
@@ -92,7 +101,29 @@ def process_wav(fpath_sig_in):
 	
 	return True
 
+############################################
+############################################
+# define DFT function
+def dft(sampleValues):
+	# Initialize variables
+	dftList = []
+	n = 0
+ 
+	for sample in range(len(sampleValues)//2):
+		# Initialize resetting variables
+		dftCalcArray = []
+		imag = 0
+		real = 0
 
+		# Perform DFT calculation
+		for k in range(len(sampleValues) - 1) :
+			imag += sampleValues[k] * np.sin(-2 * math.pi * k * n / len(sampleValues))
+			real += sampleValues[k] * np.cos(-2 * math.pi * k * n / len(sampleValues))
+		dftList.append(np.sqrt(imag**2 + real**2) / (len(sampleValues))//2)
+		# print(f"Sample {sample}: {dftList[sample]} and {sampleValues[sample]}")
+		n+=1
+
+	return dftList
 
 	
 	

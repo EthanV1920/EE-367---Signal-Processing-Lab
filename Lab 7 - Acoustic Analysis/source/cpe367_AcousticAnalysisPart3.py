@@ -111,7 +111,7 @@ def process_wav(fpath_wav_in):
     plt.plot(xList, dftList[:(len(sampleValues)//4)])
     plt.xlabel('Frequency Bin')
     plt.ylabel('Magnitude')
-    plt.suptitle(f'Weighted Peak Frequency: {round(peak_frequency, 2)} Hz and Air Gap: {round(air_gap, 2)} in')
+    # plt.suptitle(f'Weighted Peak Frequency: {round(peak_frequency, 2)} Hz and Air Gap: {round(air_gap, 2)} in')
     plt.title(f'Magnitude of DFT {fpath_wav_in.split("/")[-1]}')
     plt.text(max_frequency + 10 , maxMagnitude, f'Raw Peak: {round(max_frequency, 2)} Hz', fontsize=12, ha='left')
     # plt.show()
@@ -132,16 +132,18 @@ def main():
         return False
 
     files = [
-             'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile1b.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile1c.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile1d.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile1e.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2a.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2b.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2c.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2d.wav',
-             'Lab 7 - Acoustic Analysis/source/wav/tile2e.wav'
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile1a.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile1b.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile1c.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile1d.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile1e.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile2a.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile2b.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile2c.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile2d.wav',
+            #  'Lab 7 - Acoustic Analysis/source/wav/tile2e.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/output/Part2SampleDelay.wav',
+             'Lab 7 - Acoustic Analysis/source/wav/output/Part2Sample.wav'
              ]
              
     clifiles = [

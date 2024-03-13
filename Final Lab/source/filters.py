@@ -1,4 +1,5 @@
-from scipy.signal import sosfilt, butter
+from scipy.signal import sosfilt #, butter   could be used to make butterworth filters using some other data from the matlab file
+                                 # but it seems like more work than it's worth, lets see how these pan out first
 
 def BP697(x):
     sos = [[1, 0, -1, 1, -0.881385021996587, 0.911473662795519]]

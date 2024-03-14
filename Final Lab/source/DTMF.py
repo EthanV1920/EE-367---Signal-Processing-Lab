@@ -16,8 +16,9 @@ import numpy as np
 from cpe367_wav import cpe367_wav
 from cpe367_sig_analyzer import cpe367_sig_analyzer
 
-import my_fifo as fifo
-
+from my_fifo import my_fifo
+from tqdm import tqdm
+from LogicUnit import LogicUnit
 
 
 ############################################
@@ -33,9 +34,11 @@ def process_wav(fpath_sig_in):
 	
 	# sample rate is 4kHz
 	fs = 4000
+	fifoSize = 64
+	multiRatio = 4000 // fifoSize 
 
 	# Create fifo
-	buffer = fifo(64)
+	buffer = my_fifo(fifoSize)
 	
 	# instantiate signal analyzer and load data
 	s2 = cpe367_sig_analyzer(more_sig_list,fs)
@@ -47,26 +50,35 @@ def process_wav(fpath_sig_in):
 	
 	# process input	
 	xin = 0
-	for n_curr in range(s2.get_len()):
+	for n_curr in tqdm(range(s2.get_len()), desc="Processing..."):
 	
 		# read next input sample from the signal analyzer
 		xin = s2.get('xin',n_curr)
 		
-		analyzingArray = []
+		buffer.update(xin)
+		magnitudeArray = []
 		
-		for i in buffer.get_size():
-			analyzingArray.append(buffer.get(i))
+		for i in range(buffer.get_size()):
+			magnitudeArray.append(buffer.get(i))
 		
+		dftList = dft(magnitudeArray)
+		lowerMax = np.argmax(dftList[:len(dftList)//2])
+		upperMax = np.argmax(dftList[len(dftList)//2:]) + len(dftList)//2
+		# print(buffer.get_size())
+		# print(len(dftList))
+		# print(dftList)
 		########################
 		# students: evaluate each filter and implement other processing blocks
-		for i in range(analyzingArray):
-			analyzingArray.append(xin[i*32:(i+1)*32])
-			print(analyzingArray)
+		# Midrange should be 1075Hz
+		# for i in range(len(analyzingArray)):
+		# 	analyzingArray.append(xin[i*32:(i+1)*32])
+		# 	print(analyzingArray)
 		
 		########################
 		# students: combine results from filtering stages
 		#  and find (best guess of) symbol that is present at this sample time
-		symbol_val_det = 0
+		symbol_val_det = LogicUnit(lowerMax * multiRatio, upperMax * multiRatio).symbol()
+
 
 
 

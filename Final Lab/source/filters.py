@@ -75,6 +75,6 @@ def BP1633(x):
 #     'BP1633': [[1, 0, -1, 1, 1.59121640388426, 0.883665323160147], [0.0581673384199265, 1]]
 #     }
 
-# def filter_signal(filter_name, x):
+# def filter_signal(filter_name, x)):
 #     sos_values, scale_values = filters[filter_name]
-#     return apply_filter(x, sos_values, scale_values)
+#     return apply_filter(x, sos_values, scale_values

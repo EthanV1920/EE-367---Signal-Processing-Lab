@@ -36,6 +36,7 @@ class cpe367_sig_analyzer:
 		:return: T/F and print any error message
 		"""
 		
+		plt.title("Analysis Results")
 		px_elem = 'sample_sec'
 		
 		# setup first sample index

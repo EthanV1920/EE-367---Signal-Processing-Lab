@@ -34,8 +34,9 @@ def process_wav(fpath_sig_in):
 	
 	# sample rate is 4kHz
 	fs = 4000
-	fifoSize = 64
-	multiRatio = 4000 // fifoSize 
+	# 30 is best
+	fifoSize = 30 
+	multiRatio = fs // fifoSize 
 
 	# Create fifo
 	buffer = my_fifo(fifoSize)
@@ -67,20 +68,8 @@ def process_wav(fpath_sig_in):
 		# print(buffer.get_size())
 		# print(len(dftList))
 		# print(dftList)
-		########################
-		# students: evaluate each filter and implement other processing blocks
-		# Midrange should be 1075Hz
-		# for i in range(len(analyzingArray)):
-		# 	analyzingArray.append(xin[i*32:(i+1)*32])
-		# 	print(analyzingArray)
 		
-		########################
-		# students: combine results from filtering stages
-		#  and find (best guess of) symbol that is present at this sample time
 		symbol_val_det = LogicUnit(lowerMax * multiRatio, upperMax * multiRatio).symbol()
-
-
-
 
 		# save intermediate signals as needed, for plotting
 		#  add signals, as desired!

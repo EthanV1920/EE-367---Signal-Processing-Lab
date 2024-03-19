@@ -1,4 +1,4 @@
-function y = doFilter(x)
+function y = BP770(x)
 %DOFILTER Filters input x and returns output y.
 
 % MATLAB Code
